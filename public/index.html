@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#131020">
+  <meta name="description" content="邀请喜欢的人，一起看 B站视频。双人私密房间、实时聊天与共享观影倒计时。">
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="/styles.css">
+  <title>同屏心动 · 一起看 B站</title>
+  <script src="/app.js" defer></script>
+</head>
+<body>
+  <div class="ambient ambient-one"></div><div class="ambient ambient-two"></div>
+  <div class="shell">
+    <header class="site-header">
+      <a href="/" class="brand" aria-label="返回主页"><span class="brand-symbol">♥</span><span>同屏心动 <small>watch together</small></span></a>
+      <span class="header-note"><span class="tiny-dot"></span> 两个人的放映厅</span>
+    </header>
+
+    <main id="home" class="home">
+      <div class="home-copy">
+        <span class="eyebrow">YOUR LITTLE PRIVATE CINEMA</span>
+        <h1>好看的视频，<br><em>要和喜欢的人一起看。</em></h1>
+        <p>复制一个 B站链接，创建一间只属于你们的观影室。隔着屏幕，也能一起倒数、边看边聊。</p>
+        <div class="feature-pills"><span>♡ 私密双人房间</span><span>◉ 实时聊天</span><span>↻ 共享观影进度</span></div>
+      </div>
+      <section class="glass start-card" aria-labelledby="start-title">
+        <div class="card-heading"><div><span class="eyebrow">START A MOVIE NIGHT</span><h2 id="start-title">今晚看点什么？</h2></div><span class="sparkles">✧</span></div>
+        <form id="create-form">
+          <label for="video-url">B站视频链接 / BV号</label>
+          <textarea id="video-url" spellcheck="false" rows="3" placeholder="粘贴 https://www.bilibili.com/video/BV..." required>https://www.bilibili.com/video/BV1Lvu3zhEpr/</textarea>
+          <p class="input-tip">支持普通 B站视频页、BV号及 b23.tv 分享短链（短链解析依赖 B站可访问）。</p>
+          <label for="create-name">你的昵称</label>
+          <input id="create-name" maxlength="18" placeholder="比如：小可爱" autocomplete="nickname">
+          <button type="submit" class="primary wide" id="create-button">创建我们的观影室 <span>↗</span></button>
+        </form>
+        <div class="privacy-line"><span class="lock-icon">♧</span> 无需注册 · 不下载视频 · 使用 B站官方播放器</div>
+      </section>
+    </main>
+
+    <section id="join" class="join-screen hidden" aria-labelledby="join-title">
+      <div class="glass join-card">
+        <div class="join-heart">♥</div>
+        <span class="eyebrow">YOU'RE INVITED</span>
+        <h1 id="join-title">有人在等你一起看</h1>
+        <p class="subtle">填个昵称，就可以进入双人观影室啦。</p>
+        <form id="join-form">
+          <label for="join-name">怎么称呼你？</label>
+          <input id="join-name" maxlength="18" placeholder="输入昵称" autocomplete="nickname">
+          <button class="primary wide" id="join-button">进入观影室 <span>↗</span></button>
+        </form>
+        <a href="/" class="simple-link">返回首页</a>
+      </div>
+    </section>
+
+    <main id="room" class="room hidden">
+      <div class="room-top">
+        <div><span class="eyebrow">JUST THE TWO OF US</span><h1>今晚，一起看吧 <span class="heart-inline">♥</span></h1><p>把这间放映室的门票分享给对方。</p></div>
+        <div class="room-top-actions"><span id="connection-status" class="online-status">● 正在连接</span><button id="share-button" class="secondary">↗ 复制邀请链接</button></div>
+      </div>
+      <div class="room-layout">
+        <div class="video-column">
+          <section class="glass player-card">
+            <div class="panel-label"><span class="live-dot"></span><span>正在放映 · BILIBILI</span><a id="open-bili" href="https://www.bilibili.com" target="_blank" rel="noopener noreferrer">去 B站打开 ↗</a></div>
+            <div class="player-area" id="player-area">
+              <iframe id="bili-player" title="B站视频播放器" allow="autoplay; fullscreen; picture-in-picture; encrypted-media" allowfullscreen referrerpolicy="strict-origin-when-cross-origin"></iframe>
+              <div class="loading-cover" id="player-loading">正在加载 B站播放器…</div>
+            </div>
+            <div class="player-bottom"><span class="muted">当前视频</span><strong id="current-bvid">—</strong><span id="part-label" class="soft-tag">P1</span><span class="player-spacer"></span><button id="reload-player" class="text-button" title="按房间当前时间重新载入 B站播放器">↻ 对齐播放器进度</button></div>
+          </section>
+
+          <section class="glass sync-card">
+            <div class="section-top"><div><span class="eyebrow">SYNC MOMENT</span><h2>我们的同步时刻</h2></div><span class="soft-tag">共享计时 · 非自动控制</span></div>
+            <div class="sync-clock"><span id="room-time">00:00</span><span id="sync-mode">等待播放</span></div>
+            <div id="countdown-banner" class="countdown-banner hidden"><span id="countdown-number">5</span><span>秒后请同时点击上方 B站播放器里的「播放」</span></div>
+            <div class="sync-buttons"><button class="primary" id="sync-start">▷ 5 秒后一起播放</button><button class="secondary" id="sync-pause">Ⅱ 暂停共享计时</button><button class="secondary" id="ready-button">♡ 我准备好了</button></div>
+            <form id="seek-form" class="seek-form"><label for="seek-input">指定同步进度</label><input id="seek-input" placeholder="如 01:25 或 85" aria-label="输入分秒或秒数"><button class="secondary" type="submit">跳转到此时间</button></form>
+            <div class="sync-info"><span class="info-icon">i</span><p><strong>关于同步：</strong>B站外链播放器不开放可靠的跨站播放控制。这些按钮会同步双方的<span class="underline-dot">观影计时和操作提示</span>，不能自动点击播放器内的播放/暂停。拖动进度可通过「跳转到此时间」让双方播放器按指定时间重新加载；实际播放仍需两人手动操作。</p></div>
+          </section>
+          <section class="glass change-card"><div><span class="eyebrow">UP NEXT</span><h2>换一部视频</h2></div><form id="change-form" class="change-form"><input id="change-url" aria-label="粘贴新视频链接" placeholder="粘贴下一个 B站视频链接或 BV号"><button type="submit" class="secondary" id="change-button">一起切换 ↗</button></form></section>
+        </div>
+
+        <aside class="glass chat-card">
+          <div class="chat-header"><div><span class="eyebrow">THE TWO OF US</span><h2>悄悄话 <span class="chat-heart">♥</span></h2></div><span class="soft-tag">仅房间成员</span></div>
+          <div id="member-list" class="member-list" aria-label="房间成员"></div>
+          <div class="chat-divider"><span>聊天记录</span></div>
+          <div id="chat-messages" class="chat-messages" role="log" aria-live="polite" aria-relevant="additions"></div>
+          <form id="chat-form" class="chat-form"><input id="chat-input" maxlength="500" placeholder="想对 TA 说点什么…" autocomplete="off" aria-label="聊天消息"><button class="primary send-button" title="发送消息" aria-label="发送消息" type="submit">➤</button></form>
+          <div class="chat-foot">房间记录暂存服务器内存，服务器重启会清空。</div>
+        </aside>
+      </div>
+      <footer class="room-footer"><span>同屏心动 · 一起看，更有趣</span><button id="leave-button" class="text-button danger-text">退出房间</button></footer>
+    </main>
+  </div>
+  <div id="toast" class="toast hidden" role="status"></div>
+</body>
+</html>
