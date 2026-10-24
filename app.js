@@ -91,7 +91,8 @@ function parseTime(input) {
   return raw.split(':').reduce((total, part) => total * 60 + Number(part), 0);
 }
 function embedUrl(video, seconds = 0) {
-  const p = new URLSearchParams({ bvid: video.bvid, p: String(video.page), t: String(Math.floor(seconds)), autoplay: '0', danmaku: '0' });
+  // high_quality=1 是历史上被 B站站外播放器接受的非官方参数；尽量提高默认普通画质，不能解锁会员画质。
+  const p = new URLSearchParams({ bvid: video.bvid, p: String(video.page), t: String(Math.floor(seconds)), autoplay: '0', danmaku: '0', high_quality: '1' });
   return `https://player.bilibili.com/player.html?${p.toString()}`;
 }
 // 大会员观看必须跳转 B站官方页面，才能由 B站核验各自的登录/画质权益。
