@@ -1,0 +1,13 @@
+{
+  "name": "bili-together",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "双人 B 站同步观影房间：官方嵌入播放器、共享倒计时、进度参考、实时聊天",
+  "engines": { "node": ">=20" },
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node --watch server.js",
+    "test": "node --test"
+  }
+}
